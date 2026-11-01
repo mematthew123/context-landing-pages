@@ -12,7 +12,8 @@ const buildReport = defineArrayMember({
     defineField({name: 'finishedAt', type: 'datetime'}),
     defineField({name: 'pageId', type: 'string'}),
     defineField({name: 'slug', type: 'string'}),
-    defineField({name: 'previewToken', type: 'string'}),
+    defineField({name: 'previewToken', type: 'string', hidden: true}),
+    defineField({name: 'previewUrl', type: 'url'}),
     defineField({name: 'rulesSyncedAt', type: 'datetime'}),
     defineField({name: 'model', type: 'string'}),
     defineField({
