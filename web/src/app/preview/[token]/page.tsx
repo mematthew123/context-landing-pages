@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { stegaBrand } from "next-sanity";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PageBuilder } from "@/components/page-builder/PageBuilder";
@@ -25,10 +26,10 @@ export default function PreviewPage(props: PageProps<"/preview/[token]">) {
 
 async function Preview({ params }: Pick<PageProps<"/preview/[token]">, "params">) {
   const { token } = await params;
-  const brief = await previewClient.fetch(PREVIEW_BUILD_QUERY, { token }, { cache: "no-store" });
+  const brief = await previewClient.fetch(PREVIEW_BUILD_QUERY, { token });
   if (!brief?.build?.pageId) notFound();
 
-  const page = await previewClient.fetch(PREVIEW_PAGE_QUERY, { id: brief.build.pageId }, { cache: "no-store" });
+  const page = await previewClient.fetch(PREVIEW_PAGE_QUERY, { id: brief.build.pageId });
   if (!page) notFound();
 
   return (
@@ -37,7 +38,7 @@ async function Preview({ params }: Pick<PageProps<"/preview/[token]">, "params">
         Draft preview · {brief.title}
         {brief.build.startedAt && <> · built {new Date(brief.build.startedAt).toLocaleString("en-US")}</>}
       </div>
-      <PageBuilder page={page} />
+      <PageBuilder page={stegaBrand(page)} />
     </>
   );
 }

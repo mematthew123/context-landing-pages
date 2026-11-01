@@ -1,6 +1,8 @@
+import type { StegaBranded } from "next-sanity";
 import type { PAGE_QUERY_RESULT } from "../../../sanity.types";
 
-export type Page = NonNullable<PAGE_QUERY_RESULT>;
+// Draft mode returns stega-branded strings; clean them with stegaClean before comparing literals
+export type Page = StegaBranded<NonNullable<PAGE_QUERY_RESULT>>;
 export type Hero = NonNullable<Page["hero"]>;
 export type Faq = NonNullable<Page["faq"]>;
 export type Container = NonNullable<Page["containers"]>[number];
