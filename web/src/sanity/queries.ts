@@ -13,8 +13,8 @@ const BLOCKS = `{
   _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },
   _type == "pageBuilderCta" => { text, href },
   _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },
-  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },
-  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }
+  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },
+  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }
 }`;
 
 export const PAGE_PROJECTION = `{
@@ -28,7 +28,7 @@ export const PAGE_PROJECTION = `{
     _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]${CTA} },
     _type == "pageBuilderMediaWithSection" => {
       eyebrow, heading, matchedText,
-      media{ asset, hotspot, crop, alt },
+      media{ asset, hotspot, crop, alt, imagePrompt },
       placeholderNote,
       blocks[]${BLOCKS}
     },

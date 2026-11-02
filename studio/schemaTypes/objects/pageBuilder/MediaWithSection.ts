@@ -4,6 +4,7 @@ import {pageBuilderBlockMembers} from './blockMembers'
 import {getContainerPreview} from './getContainerPreview'
 import {matchedTextField} from './validateMatchedTextSuffix'
 import {validateNoAdjacentHeadings} from './validateNoAdjacentHeadings'
+import {mediaFields} from './mediaFields'
 
 export const pageBuilderMediaWithSection = defineType({
   name: 'pageBuilderMediaWithSection',
@@ -26,7 +27,7 @@ export const pageBuilderMediaWithSection = defineType({
       type: 'image',
       description: 'Left empty, this renders as a placeholder until someone adds an image.',
       options: {hotspot: true},
-      fields: [defineField({name: 'alt', title: 'Alt Text', type: 'string'})],
+      fields: mediaFields,
       validation: (rule) => rule.required().warning('Placeholder: add an image before publishing'),
     }),
     defineField({

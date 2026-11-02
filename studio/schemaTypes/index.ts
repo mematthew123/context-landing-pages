@@ -1,5 +1,6 @@
 import {brief} from './documents/brief'
 import {frontDoorScript} from './documents/frontDoorScript'
+import {libraryImage} from './documents/libraryImage'
 import {pageBuilderPage} from './documents/pageBuilderPage'
 import {rule} from './documents/rule'
 import {rulesSyncStatus} from './documents/rulesSyncStatus'
@@ -28,6 +29,7 @@ export const schemaTypes = [
   rule,
   rulesSyncStatus,
   frontDoorScript,
+  libraryImage,
   // Page-level sections
   pageBuilderHero,
   pageBuilderFaq,

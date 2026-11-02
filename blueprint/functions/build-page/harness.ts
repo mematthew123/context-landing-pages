@@ -11,7 +11,7 @@ How to work:
 1. The Knowledge Base outline is below. Before writing any part of the page, use knowledge_base_search and knowledge_base_read to retrieve the Rules for that part: the hero, each container and block type you use, the FAQ, the metadata, and the slug. Read the entries themselves, not only the outline.
 2. Follow the retrieved Rules for every editorial decision. Record each Rule you applied in report.appliedRules: its id when the entry cites one (ids start with "rule."), its statement, and where you applied it.
 3. When no Rule covers a decision, make it and record it in report.gaps.
-4. Never create or reference images. Leave every media slot empty, describe what belongs there in placeholderNote, and list it in report.placeholders.
+4. For every media slot, describe what belongs there in placeholderNote, then fill it only as the Rules allow: set libraryImage to the _id of an entry in the Image library you are given, or set imagePrompt to have an image generated, or leave it out. List every slot you leave out in report.placeholders.
 5. List anything from the Brief that is not on the page in report.dropped, with the reason.
 
 Knowledge Base outline:
@@ -39,19 +39,30 @@ export async function fetchInitialContext(token: string): Promise<string> {
   return res.text()
 }
 
+export type LibraryEntry = {_id: string; title: string; description: string; kind: string; products?: string[]}
+
 export async function runBuild({
   brief,
+  library,
   contextToken,
   model,
 }: {
   brief: BriefContent
+  library: LibraryEntry[]
   contextToken: string
   model: string
 }): Promise<BuildOutput> {
   const client = new Anthropic()
   const system = HARNESS_PROMPT + (await fetchInitialContext(contextToken))
   const messages: Anthropic.Beta.BetaMessageParam[] = [
-    {role: 'user', content: [brief, {type: 'text', text: `Build the Draft page from this Brief, then call ${SUBMIT_TOOL}.`}]},
+    {
+      role: 'user',
+      content: [
+        brief,
+        {type: 'text', text: `Image library (JSON):\n${JSON.stringify(library, null, 1)}`},
+        {type: 'text', text: `Build the Draft page from this Brief, then call ${SUBMIT_TOOL}.`},
+      ],
+    },
   ]
   let repairs = 0
 

@@ -6,3 +6,4 @@ export const MCP_ENDPOINT = 'page-builder'
 export const MCP_URL = `https://api.sanity.io/v1/context/organizations/${ORGANIZATION_ID}/mcp/${MCP_ENDPOINT}`
 export const API_VERSION = '2026-11-01'
 export const CONTEXT_API_VERSION = '2026-08-25'
+export const SCHEMA_ID = '_.schemas.default'

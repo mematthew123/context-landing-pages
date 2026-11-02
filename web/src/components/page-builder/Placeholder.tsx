@@ -6,6 +6,7 @@ type SanityImage = {
   hotspot?: unknown;
   crop?: unknown;
   alt?: string | null;
+  imagePrompt?: string | null;
 } | null;
 
 // A media slot the Build left empty renders as Hex's placeholder color until someone fills it
@@ -37,7 +38,7 @@ export function MediaOrPlaceholder({
       style={{ aspectRatio: `${width} / ${height}` }}
     >
       <span>
-        Image needed
+        {image?.imagePrompt ? "Generating image…" : "Image needed"}
         {note && <span className="mt-1 block font-normal text-zinc-700">{note}</span>}
       </span>
     </div>

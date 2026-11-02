@@ -22,6 +22,8 @@ const buildReport = defineArrayMember({
       of: [defineArrayMember({type: 'reference', to: [{type: 'rule'}], weak: true})],
     }),
     defineField({name: 'dropped', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'imagesPlaced', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'imagesGenerated', type: 'array', of: [defineArrayMember({type: 'string'})]}),
     defineField({name: 'placeholders', type: 'array', of: [defineArrayMember({type: 'string'})]}),
     defineField({name: 'gaps', type: 'array', of: [defineArrayMember({type: 'string'})]}),
     defineField({name: 'error', type: 'text', rows: 2}),

@@ -8,6 +8,16 @@ const cta = z.object({text: z.string(), href: z.string().describe('Full URL or a
 const markdown = (what: string) =>
   z.string().describe(`${what}. Markdown: paragraphs, **bold**, *italic*, [links](url), "- " bullets`)
 
+// How a media slot is filled: a library image by id, a prompt to generate one, or neither (a
+// Placeholder). alt describes the image either way.
+const mediaSlot = z
+  .object({
+    libraryImage: z.string().optional().describe('_id of an Image library entry'),
+    imagePrompt: z.string().optional().describe('Prompt for a generated image'),
+    alt: z.string().optional(),
+  })
+  .describe('Omit to leave a Placeholder')
+
 const eyebrow = z.object({_type: z.literal('pageBuilderEyebrow'), text: z.string().describe('At most 40 characters')})
 const heading = z.object({
   _type: z.literal('pageBuilderHeading'),
@@ -40,7 +50,8 @@ const callout = z.object({
 })
 const image = z.object({
   _type: z.literal('pageBuilderImage'),
-  placeholderNote: z.string().describe('What image belongs here; the slot is left empty for a person to fill'),
+  image: mediaSlot.optional(),
+  placeholderNote: z.string().describe('What image belongs here'),
 })
 
 const sectionBlock = z.discriminatedUnion('_type', [
@@ -69,7 +80,8 @@ const mediaWithSection = z.object({
   eyebrow: z.string().optional(),
   heading: z.string().optional(),
   matchedText: z.string().optional(),
-  placeholderNote: z.string().describe('What image belongs beside this section; the media is left empty'),
+  media: mediaSlot.optional(),
+  placeholderNote: z.string().describe('What image belongs beside this section'),
   blocks: z.array(sectionBlock).describe('At least 1'),
 })
 const contentGrid = z.object({
@@ -116,6 +128,7 @@ export const BuildOutputSchema = z.object({
 })
 
 export type PageOutput = z.infer<typeof PageSchema>
+export type MediaSlot = z.infer<typeof mediaSlot>
 export type OutputBlock = z.infer<typeof sectionBlock> | z.infer<typeof cellBlock>
 export type BuildOutput = z.infer<typeof BuildOutputSchema>
 

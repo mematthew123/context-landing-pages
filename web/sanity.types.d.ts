@@ -41,6 +41,13 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
+export type LibraryImageReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "libraryImage";
+};
+
 export type PageBuilderImage = {
   _type: "pageBuilderImage";
   image?: {
@@ -49,6 +56,8 @@ export type PageBuilderImage = {
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
+    libraryImage?: LibraryImageReference;
+    imagePrompt?: string;
     _type: "image";
   };
   placeholderNote?: string;
@@ -199,6 +208,8 @@ export type PageBuilderMediaWithSection = {
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
+    libraryImage?: LibraryImageReference;
+    imagePrompt?: string;
     _type: "image";
   };
   placeholderNote?: string;
@@ -411,6 +422,8 @@ export type Brief = {
       } & RuleReference
     >;
     dropped?: Array<string>;
+    imagesPlaced?: Array<string>;
+    imagesGenerated?: Array<string>;
     placeholders?: Array<string>;
     gaps?: Array<string>;
     error?: string;
@@ -433,6 +446,26 @@ export type SanityImageHotspot = {
   y?: number;
   height?: number;
   width?: number;
+};
+
+export type LibraryImage = {
+  _id: string;
+  _type: "libraryImage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  description?: string;
+  kind?: "product-ui" | "illustration" | "photo";
+  products?: Array<string>;
 };
 
 export type Slug = {
@@ -541,6 +574,7 @@ export type Geopoint = {
 export type AllSanitySchemaTypes =
   | SimpleBlockContent
   | SanityImageAssetReference
+  | LibraryImageReference
   | PageBuilderImage
   | PageBuilderCallout
   | PageBuilderQuote
@@ -570,6 +604,7 @@ export type AllSanitySchemaTypes =
   | Brief
   | SanityImageCrop
   | SanityImageHotspot
+  | LibraryImage
   | Slug
   | SanityImagePaletteSwatch
   | SanityImagePalette
@@ -613,7 +648,7 @@ export type PAGE_SLUGS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: PAGE_QUERY
-// Query: *[_type == "pageBuilderPage" && slug.current == $slug][0]{  _id,  name,  "slug": slug.current,  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },  containers[]{    _key,    _type,    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },    _type == "pageBuilderMediaWithSection" => {      eyebrow, heading, matchedText,      media{ asset, hotspot, crop, alt },      placeholderNote,      blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }}    },    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }} } },    _type == "pageBuilderSpeedBump" => { background, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }} }  },  faq{ heading, items[]{ _key, title, description } }}
+// Query: *[_type == "pageBuilderPage" && slug.current == $slug][0]{  _id,  name,  "slug": slug.current,  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },  containers[]{    _key,    _type,    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },    _type == "pageBuilderMediaWithSection" => {      eyebrow, heading, matchedText,      media{ asset, hotspot, crop, alt, imagePrompt },      placeholderNote,      blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }}    },    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }} } },    _type == "pageBuilderSpeedBump" => { background, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }} }  },  faq{ heading, items[]{ _key, title, description } }}
 export type PAGE_QUERY_RESULT = {
   _id: string;
   name: string | null;
@@ -669,6 +704,7 @@ export type PAGE_QUERY_RESULT = {
                   hotspot: SanityImageHotspot | null;
                   crop: SanityImageCrop | null;
                   alt: string | null;
+                  imagePrompt: string | null;
                 } | null;
                 placeholderNote: string | null;
               }
@@ -696,6 +732,7 @@ export type PAGE_QUERY_RESULT = {
           hotspot: SanityImageHotspot | null;
           crop: SanityImageCrop | null;
           alt: string | null;
+          imagePrompt: string | null;
         } | null;
         placeholderNote: string | null;
         blocks: Array<
@@ -710,6 +747,7 @@ export type PAGE_QUERY_RESULT = {
                   hotspot: SanityImageHotspot | null;
                   crop: SanityImageCrop | null;
                   alt: string | null;
+                  imagePrompt: string | null;
                 } | null;
                 placeholderNote: string | null;
               } | null;
@@ -795,6 +833,7 @@ export type PAGE_QUERY_RESULT = {
                   hotspot: SanityImageHotspot | null;
                   crop: SanityImageCrop | null;
                   alt: string | null;
+                  imagePrompt: string | null;
                 } | null;
                 placeholderNote: string | null;
               } | null;
@@ -891,7 +930,7 @@ export type PREVIEW_BUILD_QUERY_RESULT = {
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: PREVIEW_PAGE_QUERY
-// Query: *[_id == $id][0]{  _id,  name,  "slug": slug.current,  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },  containers[]{    _key,    _type,    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },    _type == "pageBuilderMediaWithSection" => {      eyebrow, heading, matchedText,      media{ asset, hotspot, crop, alt },      placeholderNote,      blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }}    },    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }} } },    _type == "pageBuilderSpeedBump" => { background, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }} }  },  faq{ heading, items[]{ _key, title, description } }}
+// Query: *[_id == $id][0]{  _id,  name,  "slug": slug.current,  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },  containers[]{    _key,    _type,    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },    _type == "pageBuilderMediaWithSection" => {      eyebrow, heading, matchedText,      media{ asset, hotspot, crop, alt, imagePrompt },      placeholderNote,      blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }}    },    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }} } },    _type == "pageBuilderSpeedBump" => { background, blocks[]{  _key,  _type,  _type == "pageBuilderEyebrow" => { text },  _type == "pageBuilderHeading" => { text, matchedText },  _type == "pageBuilderSubheading" => { text },  _type == "pageBuilderText" => { body },  _type == "pageBuilderChecklist" => { items },  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },  _type == "pageBuilderCta" => { text, href },  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }} }  },  faq{ heading, items[]{ _key, title, description } }}
 export type PREVIEW_PAGE_QUERY_RESULT =
   | {
       _id: string;
@@ -956,6 +995,7 @@ export type PREVIEW_PAGE_QUERY_RESULT =
                       hotspot: SanityImageHotspot | null;
                       crop: SanityImageCrop | null;
                       alt: string | null;
+                      imagePrompt: string | null;
                     } | null;
                     placeholderNote: string | null;
                   }
@@ -983,6 +1023,7 @@ export type PREVIEW_PAGE_QUERY_RESULT =
               hotspot: SanityImageHotspot | null;
               crop: SanityImageCrop | null;
               alt: string | null;
+              imagePrompt: string | null;
             } | null;
             placeholderNote: string | null;
             blocks: Array<
@@ -997,6 +1038,7 @@ export type PREVIEW_PAGE_QUERY_RESULT =
                       hotspot: SanityImageHotspot | null;
                       crop: SanityImageCrop | null;
                       alt: string | null;
+                      imagePrompt: string | null;
                     } | null;
                     placeholderNote: string | null;
                   } | null;
@@ -1082,6 +1124,7 @@ export type PREVIEW_PAGE_QUERY_RESULT =
                       hotspot: SanityImageHotspot | null;
                       crop: SanityImageCrop | null;
                       alt: string | null;
+                      imagePrompt: string | null;
                     } | null;
                     placeholderNote: string | null;
                   } | null;
@@ -1156,10 +1199,10 @@ declare global {
     '\n  *[_type == "brief" && _id == $id][0]{\n    title,\n    status,\n    "build": builds[-1]{ previewUrl, error, dropped, placeholders, gaps }\n  }\n': BRIEF_STATUS_QUERY_RESULT;
     '\n  *[_type == "pageBuilderPage" && defined(slug.current)] | order(name asc){\n    _id,\n    name,\n    "slug": slug.current\n  }\n': PAGES_QUERY_RESULT;
     '\n  *[_type == "pageBuilderPage" && defined(slug.current)]{ "slug": slug.current }\n': PAGE_SLUGS_QUERY_RESULT;
-    '\n  *[_type == "pageBuilderPage" && slug.current == $slug][0]{\n  _id,\n  name,\n  "slug": slug.current,\n  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },\n  containers[]{\n    _key,\n    _type,\n    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },\n    _type == "pageBuilderMediaWithSection" => {\n      eyebrow, heading, matchedText,\n      media{ asset, hotspot, crop, alt },\n      placeholderNote,\n      blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n}\n    },\n    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} } },\n    _type == "pageBuilderSpeedBump" => { background, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} }\n  },\n  faq{ heading, items[]{ _key, title, description } }\n}\n': PAGE_QUERY_RESULT;
+    '\n  *[_type == "pageBuilderPage" && slug.current == $slug][0]{\n  _id,\n  name,\n  "slug": slug.current,\n  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },\n  containers[]{\n    _key,\n    _type,\n    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },\n    _type == "pageBuilderMediaWithSection" => {\n      eyebrow, heading, matchedText,\n      media{ asset, hotspot, crop, alt, imagePrompt },\n      placeholderNote,\n      blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }\n}\n    },\n    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }\n} } },\n    _type == "pageBuilderSpeedBump" => { background, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }\n} }\n  },\n  faq{ heading, items[]{ _key, title, description } }\n}\n': PAGE_QUERY_RESULT;
     '\n  *[_type == "pageBuilderPage" && slug.current == $slug][0]{\n    name,\n    metaTitle,\n    metaDescription,\n    socialShareImage\n  }\n': PAGE_SEO_QUERY_RESULT;
     '\n  *[_type == "brief" && $previewToken in builds[].previewToken][0]{\n    title,\n    "build": builds[previewToken == $previewToken][0]{ pageId, startedAt }\n  }\n': PREVIEW_BUILD_QUERY_RESULT;
-    '\n  *[_id == $id][0]{\n  _id,\n  name,\n  "slug": slug.current,\n  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },\n  containers[]{\n    _key,\n    _type,\n    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },\n    _type == "pageBuilderMediaWithSection" => {\n      eyebrow, heading, matchedText,\n      media{ asset, hotspot, crop, alt },\n      placeholderNote,\n      blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n}\n    },\n    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} } },\n    _type == "pageBuilderSpeedBump" => { background, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} }\n  },\n  faq{ heading, items[]{ _key, title, description } }\n}\n': PREVIEW_PAGE_QUERY_RESULT;
+    '\n  *[_id == $id][0]{\n  _id,\n  name,\n  "slug": slug.current,\n  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },\n  containers[]{\n    _key,\n    _type,\n    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },\n    _type == "pageBuilderMediaWithSection" => {\n      eyebrow, heading, matchedText,\n      media{ asset, hotspot, crop, alt, imagePrompt },\n      placeholderNote,\n      blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }\n}\n    },\n    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }\n} } },\n    _type == "pageBuilderSpeedBump" => { background, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt, imagePrompt }, placeholderNote }\n} }\n  },\n  faq{ heading, items[]{ _key, title, description } }\n}\n': PREVIEW_PAGE_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {ImageIcon} from '@sanity/icons/Image'
+import {mediaFields} from './mediaFields'
 
 export const pageBuilderImage = defineType({
   name: 'pageBuilderImage',
@@ -12,7 +13,7 @@ export const pageBuilderImage = defineType({
       type: 'image',
       description: 'Left empty, this renders as a placeholder until someone adds an image.',
       options: {hotspot: true},
-      fields: [defineField({name: 'alt', title: 'Alt Text', type: 'string'})],
+      fields: mediaFields,
       validation: (rule) => rule.required().warning('Placeholder: add an image before publishing'),
     }),
     defineField({

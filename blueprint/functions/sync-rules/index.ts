@@ -18,25 +18,44 @@ export const handler = documentEventHandler<RuleEvent>(async ({context, event}) 
   const ruleId = event.data._id.replace(/^drafts\./, '')
   await client.createIfNotExists({_id: STATUS_ID, _type: STATUS_ID})
 
-  const status = await client.fetch<{state?: string} | null>(`*[_id == $id][0]{state}`, {id: STATUS_ID})
-  if (status?.state === 'syncing') {
+  // Claim the sync atomically: Rules published together fire their events at the same moment
+  const status = await client.fetch<{_rev: string; _updatedAt: string; state?: string}>(
+    `*[_id == $id][0]{_rev, _updatedAt, state}`,
+    {id: STATUS_ID},
+  )
+  // A sync that hit the Function timeout never cleared its state
+  const stale = Date.now() - Date.parse(status._updatedAt) > 15 * 60_000
+  const claimed =
+    (status.state !== 'syncing' || stale) &&
+    (await client
+      .patch(STATUS_ID)
+      .ifRevisionId(status._rev)
+      .set({state: 'syncing'})
+      .unset(['error'])
+      .commit()
+      .then(() => true)
+      .catch(() => false))
+  if (!claimed) {
     // The running sync drains the queue before it finishes
-    await client.patch(STATUS_ID).setIfMissing({pendingRuleIds: []}).append('pendingRuleIds', [ruleId]).commit({autoGenerateArrayKeys: true})
+    await client
+      .patch(STATUS_ID)
+      .setIfMissing({pendingRuleIds: []})
+      .append('pendingRuleIds', [ruleId])
+      .commit({autoGenerateArrayKeys: true})
     return
   }
-  await client.patch(STATUS_ID).set({state: 'syncing'}).unset(['error']).commit()
 
   try {
     const ids = await findKnowledgeBase()
     const kb = contextClient(ids.id)
-    let queue: {ruleId: string; operation?: string}[] = [{ruleId, operation: event.data.operation}]
+    let queue = [ruleId]
     let updatesApplied = 0
 
     while (queue.length) {
-      for (const item of queue) updatesApplied += await syncRule(kb, ids, item.ruleId, item.operation)
+      updatesApplied += await syncRules(kb, ids, queue, event.data.operation)
       const pending = await client.fetch<string[] | null>(`*[_id == $id][0].pendingRuleIds`, {id: STATUS_ID})
       await client.patch(STATUS_ID).set({pendingRuleIds: []}).commit()
-      queue = [...new Set(pending ?? [])].map((id) => ({ruleId: id}))
+      queue = [...new Set(pending ?? [])]
     }
 
     const openConflicts = (await kb.context.issues.list({status: 'open'})).filter(
@@ -55,23 +74,28 @@ export const handler = documentEventHandler<RuleEvent>(async ({context, event}) 
   }
 })
 
-// Returns how many entries or issues were brought up to date
-async function syncRule(kb: KB, ids: KnowledgeBaseIds, ruleId: string, operation?: string): Promise<number> {
+// Returns how many entries or issues were brought up to date. One refresh covers every Rule in the
+// batch; one full build covers any Rule no entry cites yet.
+async function syncRules(kb: KB, ids: KnowledgeBaseIds, ruleIds: string[], operation?: string): Promise<number> {
   // The refresh re-ingests the Rules; a rebuild only rewrites an entry from the last ingest
   const applied = await refreshAndApply(kb)
-  const citing = await entriesCiting(kb, ids, ruleId)
-  if (citing.length) {
-    console.log(`Rebuilding ${citing.join(', ')} for ${ruleId}`)
-    const jobs = await Promise.all(citing.map((path) => kb.context.entries.rebuild({path})))
-    await Promise.all(jobs.map((job) => (job.jobId ? waitForJob(kb, job.jobId, JOB_TIMEOUT) : null)))
-    return applied + citing.length
-  }
-  if (applied || operation === 'delete') return applied
+  const citing = await Promise.all(ruleIds.map((id) => entriesCiting(kb, ids, id)))
+  const uncited = ruleIds.filter((_, i) => citing[i].length === 0)
 
-  console.log(`No entry cites ${ruleId}; running a full build`)
-  const build = await kb.context.build()
-  if (build.jobId) await waitForJob(kb, build.jobId, 540_000)
-  return 1
+  if (uncited.length && !(ruleIds.length === 1 && operation === 'delete') && !applied) {
+    console.log(`No entry cites ${uncited.join(', ')}; running a full build`)
+    const build = await kb.context.build()
+    if (build.jobId) await waitForJob(kb, build.jobId, 540_000)
+    return ruleIds.length
+  }
+
+  const paths = [...new Set(citing.flat())]
+  if (paths.length) {
+    console.log(`Rebuilding ${paths.join(', ')} for ${ruleIds.join(', ')}`)
+    const jobs = await Promise.all(paths.map((path) => kb.context.entries.rebuild({path})))
+    await Promise.all(jobs.map((job) => (job.jobId ? waitForJob(kb, job.jobId, JOB_TIMEOUT) : null)))
+  }
+  return applied + paths.length
 }
 
 async function entriesCiting(kb: KB, ids: KnowledgeBaseIds, ruleId: string): Promise<string[]> {
