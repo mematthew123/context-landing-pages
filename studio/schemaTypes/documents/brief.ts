@@ -72,7 +72,7 @@ export const brief = defineType({
     defineField({
       name: 'submittedVia',
       type: 'string',
-      options: {list: ['studio', 'slack', 'form'], layout: 'radio', direction: 'horizontal'},
+      options: {list: ['studio', 'slack', 'claude', 'form'], layout: 'radio', direction: 'horizontal'},
       initialValue: 'studio',
     }),
     defineField({

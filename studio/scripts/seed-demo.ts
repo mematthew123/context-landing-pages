@@ -96,15 +96,18 @@ async function seedLibrary() {
   console.log(`Seeded the Image library (${LIBRARY.length} images)`)
 }
 
+const FRONT_DOORS = [
+  {file: 'front-door-slack.md', _id: 'frontDoor.slack', title: 'Slack (Content Agent)'},
+  {file: 'front-door-claude.md', _id: 'frontDoor.claude', title: 'Claude (Sanity connector)'},
+]
+
 async function seedSingletons() {
   await client.createIfNotExists({_id: 'rulesSyncStatus', _type: 'rulesSyncStatus', state: 'current'})
-  await client.createOrReplace({
-    _id: 'frontDoor.slack',
-    _type: 'frontDoorScript',
-    title: 'Slack (Content Agent)',
-    instructions: read('front-door-slack.md'),
-  })
-  console.log('Seeded the Rules sync status and the Slack Front-door script')
+  for (const door of FRONT_DOORS) {
+    if (!existsSync(join(dir, door.file))) continue
+    await client.createOrReplace({_id: door._id, _type: 'frontDoorScript', title: door.title, instructions: read(door.file)})
+  }
+  console.log('Seeded the Rules sync status and the Front-door scripts')
 }
 
 async function seedBrief() {

@@ -2158,6 +2158,10 @@
             },
             {
               "type": "string",
+              "value": "claude"
+            },
+            {
+              "type": "string",
               "value": "form"
             }
           ]
