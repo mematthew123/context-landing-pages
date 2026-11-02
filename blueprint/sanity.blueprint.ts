@@ -8,7 +8,7 @@ import 'dotenv/config'
 import {DATASET, MCP_ENDPOINT, PROJECT_ID} from './lib/config'
 
 // Never name an env var SANITY_PROJECT_ID here: the Blueprints CLI reads it as a scope override
-const {PREVIEW_BASE_URL = 'http://localhost:3000', BUILD_MODEL = 'claude-opus-5-5'} = process.env
+const {PREVIEW_BASE_URL = 'https://web-fresh-to-death.vercel.app', BUILD_MODEL = 'claude-opus-5-5'} = process.env
 
 const dataset = {type: 'dataset' as const, id: `${PROJECT_ID}.${DATASET}`}
 
