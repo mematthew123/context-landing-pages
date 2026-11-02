@@ -404,7 +404,7 @@ export type Brief = {
   };
   text?: string;
   submittedBy?: string;
-  submittedVia?: "studio" | "slack" | "form";
+  submittedVia?: "studio" | "slack" | "claude" | "form";
   buildRequestedAt?: string;
   status?: "idle" | "building" | "done" | "failed";
   builds?: Array<{
