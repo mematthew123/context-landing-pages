@@ -44,8 +44,10 @@ export default defineBlueprint({
       event: {
         on: ['create', 'update'],
         resource: dataset,
-        // Only a new buildRequestedAt starts a Build, so the Function's own patches don't loop
-        filter: '_type == "brief" && defined(buildRequestedAt) && delta::changedAny(buildRequestedAt)',
+        // Only a new buildRequestedAt starts a Build, so the Function's own patches don't loop. On a
+        // create there is no "before", so changedAny is false: front doors create Briefs with it set.
+        filter:
+          '_type == "brief" && defined(buildRequestedAt) && (delta::operation() == "create" || delta::changedAny(buildRequestedAt))',
         projection:
           '{_id, title, text, status, submittedVia, buildRequestedAt, "file": document.asset->{url, originalFilename, mimeType, size}}',
       },
