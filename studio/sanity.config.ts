@@ -9,7 +9,7 @@ import {BuildPageAction} from './actions/BuildPageAction'
 
 const previewUrl =
   process.env.SANITY_STUDIO_PREVIEW_URL ||
-  (process.env.NODE_ENV === 'production' ? 'https://web-fresh-to-death.vercel.app' : 'http://localhost:3000')
+  (process.env.NODE_ENV === 'production' ? 'https://web-phi-three-79.vercel.app' : 'http://localhost:3000')
 
 export default defineConfig({
   name: 'default',
