@@ -61,7 +61,7 @@ export default defineBlueprint({
         on: ['create', 'update', 'delete'],
         resource: dataset,
         filter: '_type == "rule"',
-        projection: '{_id, statement}',
+        projection: '{_id, "operation": delta::operation()}',
       },
     }),
   ],

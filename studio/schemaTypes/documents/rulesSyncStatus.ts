@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 import {SyncIcon} from '@sanity/icons/Sync'
 
 export const rulesSyncStatus = defineType({
@@ -16,7 +16,7 @@ export const rulesSyncStatus = defineType({
     defineField({name: 'lastRefreshAt', type: 'datetime'}),
     defineField({name: 'updatesApplied', type: 'number'}),
     defineField({name: 'openConflicts', type: 'number'}),
-    defineField({name: 'pending', type: 'boolean'}),
+    defineField({name: 'pendingRuleIds', type: 'array', of: [defineArrayMember({type: 'string'})]}),
     defineField({name: 'error', type: 'text', rows: 2}),
   ],
   preview: {

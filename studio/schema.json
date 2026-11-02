@@ -1507,10 +1507,13 @@
         },
         "optional": true
       },
-      "pending": {
+      "pendingRuleIds": {
         "type": "objectAttribute",
         "value": {
-          "type": "boolean"
+          "type": "array",
+          "of": {
+            "type": "string"
+          }
         },
         "optional": true
       },

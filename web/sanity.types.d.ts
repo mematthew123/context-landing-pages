@@ -294,7 +294,7 @@ export type RulesSyncStatus = {
   lastRefreshAt?: string;
   updatesApplied?: number;
   openConflicts?: number;
-  pending?: boolean;
+  pendingRuleIds?: Array<string>;
   error?: string;
 };
 

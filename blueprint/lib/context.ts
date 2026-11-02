@@ -15,12 +15,19 @@ export function contextClient(knowledgeBaseId?: string) {
   })
 }
 
-export async function findKnowledgeBaseId(): Promise<string> {
-  if (process.env.KNOWLEDGE_BASE_ID) return process.env.KNOWLEDGE_BASE_ID
-  const {data} = await contextClient().context.knowledgeBases.list({organizationId: ORGANIZATION_ID})
-  const kb = data.find((kb) => kb.title === 'Hex page rules')
+// A Knowledge Base has two ids: `id` (a UUID) for the management API, and `publicId` (`kb…`), which
+// its entry documents carry in `knowledgeBaseId`
+export type KnowledgeBaseIds = {id: string; publicId?: string}
+
+export async function findKnowledgeBase(): Promise<KnowledgeBaseIds> {
+  const client = contextClient()
+  const kb = process.env.KNOWLEDGE_BASE_ID
+    ? await client.context.knowledgeBases.get(process.env.KNOWLEDGE_BASE_ID)
+    : (await client.context.knowledgeBases.list({organizationId: ORGANIZATION_ID})).data.find(
+        (kb) => kb.title === 'Hex page rules',
+      )
   if (!kb) throw new Error('No "Hex page rules" Knowledge Base in the organization')
-  return kb.id
+  return {id: kb.id, publicId: (kb as {publicId?: string}).publicId}
 }
 
 const TERMINAL = new Set(['succeeded', 'done', 'failed', 'cancelled'])

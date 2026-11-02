@@ -13,7 +13,8 @@ const DAILY_CAP = Number(process.env.BUILD_DAILY_CAP ?? 50)
 
 export const handler = documentEventHandler<Event>(async ({context, event}) => {
   const brief = event.data
-  const client = createClient({...context.clientOptions, apiVersion: API_VERSION, useCdn: false})
+  // Raw perspective: slug de-duplication has to see other Builds' Draft pages
+  const client = createClient({...context.clientOptions, apiVersion: API_VERSION, useCdn: false, perspective: 'raw'})
   const buildKey = randomUUID().replaceAll('-', '').slice(0, 12)
   const at = (field: string) => `builds[_key == "${buildKey}"].${field}`
 
