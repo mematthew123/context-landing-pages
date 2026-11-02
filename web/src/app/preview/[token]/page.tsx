@@ -26,10 +26,12 @@ export default function PreviewPage(props: PageProps<"/preview/[token]">) {
 
 async function Preview({ params }: Pick<PageProps<"/preview/[token]">, "params">) {
   const { token } = await params;
-  const brief = await previewClient.fetch(PREVIEW_BUILD_QUERY, { token });
+  const brief = await previewClient.fetch(PREVIEW_BUILD_QUERY, { previewToken: token });
   if (!brief?.build?.pageId) notFound();
 
-  const page = await previewClient.fetch(PREVIEW_PAGE_QUERY, { id: brief.build.pageId });
+  // The drafts perspective serves a draft under its published id
+  const id = brief.build.pageId.replace(/^drafts\./, "");
+  const page = await previewClient.fetch(PREVIEW_PAGE_QUERY, { id });
   if (!page) notFound();
 
   return (

@@ -65,9 +65,9 @@ export const PAGE_SEO_QUERY = defineQuery(`
 
 // Preview links resolve a per-Build token to that Build's Draft page
 export const PREVIEW_BUILD_QUERY = defineQuery(`
-  *[_type == "brief" && $token in builds[].previewToken][0]{
+  *[_type == "brief" && $previewToken in builds[].previewToken][0]{
     title,
-    "build": builds[previewToken == $token][0]{ pageId, startedAt }
+    "build": builds[previewToken == $previewToken][0]{ pageId, startedAt }
   }
 `);
 

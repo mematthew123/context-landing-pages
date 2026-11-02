@@ -580,6 +580,21 @@ export type AllSanitySchemaTypes =
   | SanityImageAsset
   | Geopoint;
 
+// Source: ../web/src/app/brief/[id]/page.tsx
+// Variable: BRIEF_STATUS_QUERY
+// Query: *[_type == "brief" && _id == $id][0]{    title,    status,    "build": builds[-1]{ previewUrl, error, dropped, placeholders, gaps }  }
+export type BRIEF_STATUS_QUERY_RESULT = {
+  title: string | null;
+  status: "building" | "done" | "failed" | "idle" | null;
+  build: {
+    previewUrl: string | null;
+    error: string | null;
+    dropped: Array<string> | null;
+    placeholders: Array<string> | null;
+    gaps: Array<string> | null;
+  } | null;
+} | null;
+
 // Source: ../web/src/sanity/queries.ts
 // Variable: PAGES_QUERY
 // Query: *[_type == "pageBuilderPage" && defined(slug.current)] | order(name asc){    _id,    name,    "slug": slug.current  }
@@ -865,7 +880,7 @@ export type PAGE_SEO_QUERY_RESULT = {
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: PREVIEW_BUILD_QUERY
-// Query: *[_type == "brief" && $token in builds[].previewToken][0]{    title,    "build": builds[previewToken == $token][0]{ pageId, startedAt }  }
+// Query: *[_type == "brief" && $previewToken in builds[].previewToken][0]{    title,    "build": builds[previewToken == $previewToken][0]{ pageId, startedAt }  }
 export type PREVIEW_BUILD_QUERY_RESULT = {
   title: string | null;
   build: {
@@ -1138,11 +1153,12 @@ export type PREVIEW_PAGE_QUERY_RESULT =
 // Query TypeMap
 declare global {
   interface SanityQueries {
+    '\n  *[_type == "brief" && _id == $id][0]{\n    title,\n    status,\n    "build": builds[-1]{ previewUrl, error, dropped, placeholders, gaps }\n  }\n': BRIEF_STATUS_QUERY_RESULT;
     '\n  *[_type == "pageBuilderPage" && defined(slug.current)] | order(name asc){\n    _id,\n    name,\n    "slug": slug.current\n  }\n': PAGES_QUERY_RESULT;
     '\n  *[_type == "pageBuilderPage" && defined(slug.current)]{ "slug": slug.current }\n': PAGE_SLUGS_QUERY_RESULT;
     '\n  *[_type == "pageBuilderPage" && slug.current == $slug][0]{\n  _id,\n  name,\n  "slug": slug.current,\n  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },\n  containers[]{\n    _key,\n    _type,\n    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },\n    _type == "pageBuilderMediaWithSection" => {\n      eyebrow, heading, matchedText,\n      media{ asset, hotspot, crop, alt },\n      placeholderNote,\n      blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n}\n    },\n    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} } },\n    _type == "pageBuilderSpeedBump" => { background, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} }\n  },\n  faq{ heading, items[]{ _key, title, description } }\n}\n': PAGE_QUERY_RESULT;
     '\n  *[_type == "pageBuilderPage" && slug.current == $slug][0]{\n    name,\n    metaTitle,\n    metaDescription,\n    socialShareImage\n  }\n': PAGE_SEO_QUERY_RESULT;
-    '\n  *[_type == "brief" && $token in builds[].previewToken][0]{\n    title,\n    "build": builds[previewToken == $token][0]{ pageId, startedAt }\n  }\n': PREVIEW_BUILD_QUERY_RESULT;
+    '\n  *[_type == "brief" && $previewToken in builds[].previewToken][0]{\n    title,\n    "build": builds[previewToken == $previewToken][0]{ pageId, startedAt }\n  }\n': PREVIEW_BUILD_QUERY_RESULT;
     '\n  *[_id == $id][0]{\n  _id,\n  name,\n  "slug": slug.current,\n  hero{ eyebrow, heading, subheading, ctas[]{ _key, text, href } },\n  containers[]{\n    _key,\n    _type,\n    _type == "pageBuilderSectionHeader" => { eyebrow, heading, matchedText, subheading, ctas[]{ _key, text, href } },\n    _type == "pageBuilderMediaWithSection" => {\n      eyebrow, heading, matchedText,\n      media{ asset, hotspot, crop, alt },\n      placeholderNote,\n      blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n}\n    },\n    _type == "pageBuilderContentGrid" => { heading, cells[]{ _key, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} } },\n    _type == "pageBuilderSpeedBump" => { background, blocks[]{\n  _key,\n  _type,\n  _type == "pageBuilderEyebrow" => { text },\n  _type == "pageBuilderHeading" => { text, matchedText },\n  _type == "pageBuilderSubheading" => { text },\n  _type == "pageBuilderText" => { body },\n  _type == "pageBuilderChecklist" => { items },\n  _type == "pageBuilderFeatureList" => { items[]{ _key, title, body } },\n  _type == "pageBuilderCta" => { text, href },\n  _type == "pageBuilderQuote" => { quote, highlightedText, author, authorTitle, company },\n  _type == "pageBuilderCallout" => { title, body, image{ image{ asset, hotspot, crop, alt }, placeholderNote } },\n  _type == "pageBuilderImage" => { image{ asset, hotspot, crop, alt }, placeholderNote }\n} }\n  },\n  faq{ heading, items[]{ _key, title, description } }\n}\n': PREVIEW_PAGE_QUERY_RESULT;
   }
 }
