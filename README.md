@@ -388,7 +388,7 @@ Each app keeps its own `package.json` and `pnpm-lock.yaml`; run commands from in
 
 ### 0. Enable Sanity Context
 
-An organization admin turns on Context and Knowledge Bases (both opt-in betas) from the organization's **Labs** page: https://www.sanity.io/organizations/oCXIUhNYW/labs
+An organization admin turns on Context and Knowledge Bases (both opt-in betas) from the organization's **Labs** page: https://www.sanity.io/organizations/otj10m0k9/labs
 
 Until they're on, the Blueprint can't create the Knowledge Base or its endpoints.
 
