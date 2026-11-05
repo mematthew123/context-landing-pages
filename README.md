@@ -87,7 +87,7 @@ Every front door does exactly one thing: create (or update) a Brief with `buildR
 |---|---|---|---|
 | **Studio** | Editors | Create a Brief, upload a file or paste text, click **Build page** | ✅ Live |
 | **`/brief` web form** | Anyone, no Studio login | Name, your name, file upload (PDF, DOCX, MD, TXT) or textarea | ✅ Live |
-| **Claude** | Marketers in claude.ai | Attach or describe a brief; Claude interviews you, then submits | ✅ Live (skill upload pending) |
+| **Claude** | Marketers in claude.ai | Attach or describe a brief; Claude interviews you, then submits | ✅ Live |
 | **Slack** | Marketers in Slack | `@Sanity` + the brief, via Sanity's Content Agent | ⏳ Planned |
 
 ### Studio
@@ -148,7 +148,7 @@ Three layers make Claude find its instructions:
 2. **The script**, the `frontDoorScript` document `frontDoor.claude`, editable in Studio under **Front-door scripts**. It holds the actual behaviour: interview, submit, poll, revise, explain.
 3. **The schema pointer.** The `brief` type and its `text` field descriptions point at `frontDoor.claude`, so an agent that inspects the schema through a bare Sanity connector, with no skill, still finds it.
 
-Claude reads attached files itself and transcribes them into the Brief's `text`, because the connector can't upload chat attachments. Changes that should apply to *every* page ("always say…") are redirected to Rules in Studio.
+Claude reads attached files itself and transcribes them into the Brief's `text`, because the connector can't upload chat attachments. The same goes for screenshots: add them to the **Image library** in Studio before the Build, or the Build leaves Placeholders for them. Changes that should apply to *every* page ("always say…") are redirected to Rules in Studio.
 
 ### Slack (planned)
 
