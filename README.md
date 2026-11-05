@@ -4,7 +4,7 @@ Monorepo for the landing pages site. A marketer submits a brief; a Sanity Functi
 
 - `web/` — Next.js frontend, deployed to Vercel (project root directory: `web`). `/lp/[slug]` pages, draft mode for Presentation, `/preview/[token]` build previews, `/brief` submission form.
 - `studio/` — Sanity Studio: the page builder schema, Briefs, Rules, and the "Build page" action.
-- `blueprint/` — Sanity Blueprint: the Knowledge Base, its Context MCP endpoint, and the `build-page` and `sync-rules` Functions.
+- `blueprint/` — Sanity Blueprint: the Knowledge Base, its Context MCP endpoints (`page-builder` for Builds, `hex-authoring` for coding agents), and the `build-page` and `sync-rules` Functions.
 
 Each app keeps its own `package.json` and `pnpm-lock.yaml`; run commands from inside the app folder.
 
