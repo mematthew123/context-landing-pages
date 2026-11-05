@@ -1,0 +1,30 @@
+{
+  "name": "context-landing-pages-blueprint",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "doctor": "pnpm dlx sanity@latest blueprints doctor",
+    "plan": "pnpm dlx sanity@latest blueprints plan",
+    "deploy": "pnpm dlx sanity@latest blueprints deploy",
+    "logs": "pnpm dlx sanity@latest blueprints logs --watch",
+    "dev": "pnpm dlx sanity@latest functions dev",
+    "connect-rules": "node scripts/connect-rules.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "packageManager": "pnpm@11.18.0",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "@sanity/client": "^8.14.1",
+    "@sanity/functions": "^1.11.0",
+    "mammoth": "^1.13.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@sanity/blueprints": "^0.32.0",
+    "@types/node": "^24.19.2",
+    "dotenv": "^18.0.9",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}
