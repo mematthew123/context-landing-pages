@@ -6,6 +6,7 @@ import {
 } from '@sanity/blueprints'
 import 'dotenv/config'
 import {DATASET, MCP_ENDPOINT, PROJECT_ID} from './lib/config'
+import {HEX_AUTHORING_INSTRUCTIONS, PAGE_BUILDER_INSTRUCTIONS} from './lib/instructions'
 
 // Never name an env var SANITY_PROJECT_ID here: the Blueprints CLI reads it as a scope override
 const {PREVIEW_BASE_URL = 'https://web-phi-three-79.vercel.app', BUILD_MODEL = 'claude-opus-5-5'} = process.env
@@ -31,8 +32,15 @@ export default defineBlueprint({
       name: MCP_ENDPOINT,
       title: 'Page builder',
       sources: [pageRules],
-      instructions:
-        'Overrides take precedence over Rules. The Brief is the only source of facts, numbers, and quotes.',
+      instructions: PAGE_BUILDER_INSTRUCTIONS,
+    }),
+
+    // The same Rules for engineers' coding agents, so no repo skill restates them
+    defineContextMcpEndpoint({
+      name: 'hex-authoring',
+      title: 'Hex authoring',
+      sources: [pageRules],
+      instructions: HEX_AUTHORING_INSTRUCTIONS,
     }),
 
     defineDocumentFunction({

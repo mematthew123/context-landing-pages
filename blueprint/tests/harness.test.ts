@@ -2,6 +2,7 @@ import {describe, expect, it} from 'vitest'
 import {z} from 'zod/v4'
 import {HARNESS_PROMPT} from '../functions/build-page/harness'
 import {BuildOutputSchema} from '../functions/build-page/pageSchema'
+import {HEX_AUTHORING_INSTRUCTIONS, PAGE_BUILDER_INSTRUCTIONS} from '../lib/instructions'
 
 // ADR 0003: the repo holds Build mechanics, never editorial judgment. If one of these words is
 // needed, the instruction is a Rule and belongs in Sanity.
@@ -17,7 +18,12 @@ function descriptions(schema: unknown): string[] {
 }
 
 describe('no authoring prose in the repo', () => {
-  const texts = {'harness prompt': HARNESS_PROMPT, 'schema descriptions': descriptions(BuildOutputSchema).join('\n')}
+  const texts = {
+    'harness prompt': HARNESS_PROMPT,
+    'schema descriptions': descriptions(BuildOutputSchema).join('\n'),
+    'page-builder endpoint instructions': PAGE_BUILDER_INSTRUCTIONS,
+    'hex-authoring endpoint instructions': HEX_AUTHORING_INSTRUCTIONS,
+  }
   for (const [name, text] of Object.entries(texts)) {
     it(`${name} has no editorial vocabulary`, () => {
       const found = EDITORIAL.filter((word) => new RegExp(`\\b${word}`, 'i').test(text))
