@@ -42,6 +42,10 @@ export const brief = defineType({
   title: 'Brief',
   type: 'document',
   icon: DocumentTextIcon,
+  // Read by agents that inspect the schema through the Sanity connector, so a conversational
+  // front door finds its script even when nothing else told it where to look
+  description:
+    'A marketer’s request for one landing page. Agents creating or updating Briefs: first read and follow *[_id == "frontDoor.claude"][0].instructions.',
   fields: [
     defineField({name: 'title', type: 'string', validation: (rule) => rule.required()}),
     defineField({
@@ -56,6 +60,8 @@ export const brief = defineType({
       title: 'Brief text',
       type: 'text',
       rows: 16,
+      description:
+        'The brief, as written. Agents filling this in: first read and follow *[_id == "frontDoor.claude"][0].instructions.',
       // A warning, not an error: Content Agent asks for confirmation before publishing a type with
       // custom errors. The Build enforces it.
       validation: (rule) =>
