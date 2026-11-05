@@ -10,7 +10,7 @@ Each app keeps its own `package.json` and `pnpm-lock.yaml`; run commands from in
 
 ## Setup
 
-1. **Studio:** `pnpm typegen` after schema changes (writes `studio/schema.json` and `web/sanity.types.d.ts`), then `npx sanity schema deploy`.
+1. **Studio:** `pnpm typegen` after schema changes (writes `studio/schema.json` and `web/sanity.types.d.ts`), then `pnpm run deploy`. Deploying the Studio updates both schemas Sanity keeps: the Studio's own (read by the Sanity MCP connector) and `_.schemas.default` (used by Agent Actions for image generation). `sanity schema deploy` alone updates only the second.
 2. **Web:** `web/.env.local` needs `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_READ_TOKEN` (Viewer), `SANITY_API_WRITE_TOKEN` (Editor, for `/brief`), and optionally `NEXT_PUBLIC_SANITY_STUDIO_URL`.
 3. **Blueprint** (from `blueprint/`, signed in with a personal login):
    ```sh
