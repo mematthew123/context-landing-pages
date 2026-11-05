@@ -22,7 +22,7 @@ Marketing writes **Rules** in Sanity Studio (voice, copy mechanics, terminology,
 - [Images](#images)
 - [Content model](#content-model)
 - [Repository layout](#repository-layout)
-- [Setup](#setup)
+- [Setup](#setup): enable Context, Studio, web, Blueprint, Claude
 - [Day-to-day operations](#day-to-day-operations)
 - [Guardrails and tests](#guardrails-and-tests)
 - [Known behaviours and gotchas](#known-behaviours-and-gotchas)
@@ -385,6 +385,12 @@ Each app keeps its own `package.json` and `pnpm-lock.yaml`; run commands from in
 ---
 
 ## Setup
+
+### 0. Enable Sanity Context
+
+An organization admin turns on Context and Knowledge Bases (both opt-in betas) from the organization's **Labs** page: https://www.sanity.io/organizations/oCXIUhNYW/labs
+
+Until they're on, the Blueprint can't create the Knowledge Base or its endpoints.
 
 ### 1. Studio
 
